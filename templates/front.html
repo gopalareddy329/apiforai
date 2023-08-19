@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="replays">
+
+    </div>
+    <form id="form_data" >
+        {% csrf_token %}
+        <input type="text" class="user-question" name="question">
+        <button>submit</button>
+    </form>
+</body>
+<script type="text/javascript">
+    var form= document.getElementById('form_data')
+    var url='api/post/'
+    form.addEventListener('submit',function(e){
+        var CSRF_TOKEN = '{{ csrf_token }}';
+        
+        var val=document.querySelector(".user-question")
+
+
+        e.preventDefault()
+        fetch('{% url "apicalls" %}',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'X-CSRFToken':CSRF_TOKEN,
+            },
+            body:JSON.stringify({'question':val.value})
+        }).then((resp)=>{
+            return resp.json()
+        })
+        .then((data)=>{
+            var newd=`<ul><li>${val.value}:${data.ans}</li></ul>`
+            document.querySelector('.replays').insertAdjacentHTML('beforeend',newd)
+            
+        })
+        
+    })
+    
+</script>
+</html>
